@@ -17,6 +17,8 @@ O frontend foi desenvolvido utilizando **Streamlit** e se conecta ao backend hos
 2. **🖙 Backend (AWS Lambda)**
    - Repositório: [`fiap-ds-cognitive-environment-backend`](https://github.com/mateuspada/fiap-ds-cognitive-environment-backend)
    - API Serverless em **AWS Lambda** usando **AWS Textract** e **AWS Rekognition**.
+   - Inicialmente, a solução usava **DLib e OpenCV**. No entanto, essas bibliotecas exigem dependências do sistema operacional que não funcionam bem no AWS Lambda sem um container dedicado.
+   - **Decisão:** Mudar para **AWS Rekognition**, que oferece reconhecimento facial e comparação de faces sem precisar de bibliotecas externas.
 
 3. **🖥️ Frontend (Streamlit)**
    - Repositório: [`fiap-ds-cognitive-environment-frontend`](https://github.com/mateuspada/fiap-ds-cognitive-environment-frontend)
@@ -34,6 +36,7 @@ O frontend permite ao usuário **fazer upload** das imagens e visualizar os resu
 - **Requests** (para comunicação com a API)
 - **Base64** (para conversão das imagens)
 - **PyMuPDF (fitz)** (para converter PDFs em imagens)
+- **Python 3.12**
 
 ### 📥 Entrada do Usuário
 O usuário faz **upload** de três arquivos:
