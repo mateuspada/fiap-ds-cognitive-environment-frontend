@@ -67,7 +67,7 @@ if document_file and validation_file and residence_file:
                 st.success("✅ Documents successfully validated!")
                 
                 # Display extracted information
-                st.write("### 🆔 Extracted Information:")
+                st.write("### Extracted Information:")
                 st.write(f"**Name:** {response_data['name']}")
                 st.write(f"**CPF:** {response_data['cpf']}")
                 st.write(f"**Photo Validation:** {'✅ Yes' if response_data['photo_validation'] else '❌ No'}")
