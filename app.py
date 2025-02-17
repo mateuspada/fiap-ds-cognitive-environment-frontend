@@ -3,7 +3,7 @@ import requests
 import base64
 import json
 from PIL import Image
-from pdf2image import convert_from_bytes
+import fitz 
 
 # Streamlit UI Title
 st.title("📄 Cognitive Document Validation")
@@ -25,12 +25,16 @@ def convert_image_to_base64(image_file):
     return base64.b64encode(image_file.read()).decode("utf-8")
 
 def convert_pdf_to_base64(pdf_file):
-    """Convert PDF file to Base64 string after converting to image."""
-    images = convert_from_bytes(pdf_file.read())  # Convert PDF to images
-    if images:
-        img_bytes = images[0].tobytes("jpeg", "RGB")  # Convert first page to JPEG
-        return base64.b64encode(img_bytes).decode("utf-8")
-    return None
+    """Convert PDF to Base64 string after converting the first page to an image."""
+    doc = fitz.open(stream=pdf_file.read(), filetype="pdf")  # Open PDF from bytes
+    if len(doc) == 0:
+        return None  # If PDF has no pages
+
+    # Convert first page to an image
+    pix = doc[0].get_pixmap()
+    img_bytes = pix.tobytes("jpeg")  # Convert to JPEG bytes
+    
+    return base64.b64encode(img_bytes).decode("utf-8")
 
 # Process and send to API only when all files are uploaded
 if document_file and validation_file and residence_file:
@@ -64,12 +68,12 @@ if document_file and validation_file and residence_file:
                 
                 # Display extracted information
                 st.write("### 🆔 Extracted Information:")
-                st.write(f"**Name:** {response_data['body']['name']}")
-                st.write(f"**CPF:** {response_data['body']['cpf']}")
-                st.write(f"**Photo Validation:** {'✅ Yes' if response_data['body']['photo_validation'] else '❌ No'}")
-                st.write(f"**Photo Similarity Score:** {response_data['body']['photo_similarity']:.4f}")
-                st.write(f"**Name Validation:** {'✅ Yes' if response_data['body']['name_validation'] else '❌ No'}")
-                st.write(f"**Extracted Address:** {response_data['body']['address']}")
+                st.write(f"**Name:** {response_data['name']}")
+                st.write(f"**CPF:** {response_data['cpf']}")
+                st.write(f"**Photo Validation:** {'✅ Yes' if response_data['photo_validation'] else '❌ No'}")
+                st.write(f"**Photo Similarity Score:** {response_data['photo_similarity']:.4f}")
+                st.write(f"**Name Validation:** {'✅ Yes' if response_data['name_validation'] else '❌ No'}")
+                st.write(f"**Address:** {response_data['address']}")
                 
             else:
                 st.error(f"🚨 Error {response.status_code}: {response.text}")
