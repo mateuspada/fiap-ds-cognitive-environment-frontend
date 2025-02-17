@@ -6,19 +6,19 @@ from PIL import Image
 import fitz 
 
 # Streamlit UI Title
-st.title("📄 Cognitive Document Validation")
+st.title("📄 Validação Cognitiva de Documentos")
 
 st.write("""
-### Upload the required documents:
-1. **Document with Photo** (PNG, JPG, JPEG)
-2. **Validation Photo** (PNG, JPG, JPEG)
-3. **Proof of Residence** (PDF)
+### Faça o upload dos documentos necessários:
+1. **Documento com Foto (CNH Nova Versão)** (PNG, JPG, JPEG)
+2. **Foto de Rosto** (PNG, JPG, JPEG)
+3. **Comprovante de Residência** (PDF)
 """)
 
 # File Uploaders
-document_file = st.file_uploader("📷 Upload Document with Photo", type=["png", "jpg", "jpeg"])
-validation_file = st.file_uploader("📷 Upload Validation Photo", type=["png", "jpg", "jpeg"])
-residence_file = st.file_uploader("📄 Upload Proof of Residence (PDF)", type=["pdf"])
+document_file = st.file_uploader("📷 Enviar Documento com Foto (CNH Nova Versão)", type=["png", "jpg", "jpeg"])
+validation_file = st.file_uploader("📷 Enviar Foto de Rosto", type=["png", "jpg", "jpeg"])
+residence_file = st.file_uploader("📄 Enviar Comprovante de Residência (PDF)", type=["pdf"])
 
 def convert_image_to_base64(image_file):
     """Convert an image file to Base64 string."""
@@ -38,7 +38,7 @@ def convert_pdf_to_base64(pdf_file):
 
 # Process and send to API only when all files are uploaded
 if document_file and validation_file and residence_file:
-    with st.spinner("Processing documents..."):
+    with st.spinner("Processando documentos..."):
         
         # Convert files to Base64
         document_base64 = convert_image_to_base64(document_file)
@@ -46,7 +46,7 @@ if document_file and validation_file and residence_file:
         residence_base64 = convert_pdf_to_base64(residence_file)
 
         if not residence_base64:
-            st.error("Error converting PDF to image. Please upload a valid PDF.")
+            st.error("Erro ao converter o PDF para imagem. Por favor, envie um PDF válido.")
         else:
             # Prepare the payload
             payload = {
@@ -64,16 +64,16 @@ if document_file and validation_file and residence_file:
             # Process API response
             if response.status_code == 200:
                 response_data = response.json()
-                st.success("✅ Documents successfully validated!")
+                st.success("✅ Documentos validados com sucesso!")
                 
                 # Display extracted information
-                st.write("### Extracted Information:")
-                st.write(f"**Name:** {response_data['name']}")
+                st.write("### Informações Extraídas:")
+                st.write(f"**Nome:** {response_data['name']}")
                 st.write(f"**CPF:** {response_data['cpf']}")
-                st.write(f"**Photo Validation:** {'✅ Yes' if response_data['photo_validation'] else '❌ No'}")
-                st.write(f"**Photo Similarity Score:** {response_data['photo_similarity']:.4f}")
-                st.write(f"**Name Validation:** {'✅ Yes' if response_data['name_validation'] else '❌ No'}")
-                st.write(f"**Address:** {response_data['address']}")
+                st.write(f"**Validação da Foto:** {'✅ Sim' if response_data['photo_validation'] else '❌ Não'}")
+                st.write(f"**Porcentagem de Similaridade da Foto:** {response_data['photo_similarity']:.2f}%")
+                st.write(f"**Validação do Nome da CNH com Comprovante de Residência:** {'✅ Sim' if response_data['name_validation'] else '❌ Não'}")
+                st.write(f"**Endereço:** {response_data['address']}")
                 
             else:
-                st.error(f"🚨 Error {response.status_code}: {response.text}")
+                st.error(f"🚨 Erro {response.status_code}: {response.text}")
