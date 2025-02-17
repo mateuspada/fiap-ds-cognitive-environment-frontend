@@ -6,7 +6,7 @@ from PIL import Image
 import fitz 
 
 # Streamlit UI Title
-st.title("📄 Validação Cognitiva de Documentos")
+st.title("📄 Validação de Documentos")
 
 st.write("""
 ### Faça o upload dos documentos necessários:
